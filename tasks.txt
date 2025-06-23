@@ -1,4 +1,4 @@
 Priority,Task,Due Date,Due Time,Status
-Low,task1,6/23/2025,23:59,21 hours left
-High,Progress Report,6/23/2025,16:00,13 hours left
+Low,task1,6/23/2025,23:59,13 hours left
+High,Progress Report,6/23/2025,16:00,5 hours left
 High,NETA Exam,6/26/2025,17:00,3 days left

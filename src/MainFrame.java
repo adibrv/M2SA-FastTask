@@ -49,23 +49,23 @@ public class MainFrame extends javax.swing.JFrame {
         javax.swing.JPanel taskListPanel = new javax.swing.JPanel();
         javax.swing.JScrollPane taskListSPanel = new javax.swing.JScrollPane();
         taskList = new javax.swing.JTable();
-        taskOptionPanel = new javax.swing.JPanel();
-        labelTaskName = new javax.swing.JLabel();
+        javax.swing.JPanel taskOptionPanel = new javax.swing.JPanel();
+        javax.swing.JLabel labelTaskName = new javax.swing.JLabel();
         tfTaskName = new javax.swing.JTextField();
-        labelDueDate = new javax.swing.JLabel();
+        javax.swing.JLabel labelDueDate = new javax.swing.JLabel();
         spinnerHour = new javax.swing.JSpinner();
         dueDateChooser = new com.toedter.calendar.JDateChooser();
-        labelDueTime = new javax.swing.JLabel();
+        javax.swing.JLabel labelDueTime = new javax.swing.JLabel();
         spinnerMinute = new javax.swing.JSpinner();
-        labelTimeCln = new javax.swing.JLabel();
-        labelPriority = new javax.swing.JLabel();
+        javax.swing.JLabel labelTimeCln = new javax.swing.JLabel();
+        javax.swing.JLabel labelPriority = new javax.swing.JLabel();
         comboPriority = new javax.swing.JComboBox<>();
-        btnAdd = new javax.swing.JButton();
-        btnDelete = new javax.swing.JButton();
+        javax.swing.JButton btnAdd = new javax.swing.JButton();
+        javax.swing.JButton btnDelete = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Dashboard");
+        setTitle("FastTask Application");
         setMinimumSize(new java.awt.Dimension(1000, 729));
         addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
@@ -233,10 +233,11 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(comboPriority, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(labelPriority, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnAdd)
-                    .addComponent(btnDelete)
-                    .addComponent(btnUpdate))
+                    .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnDelete)
+                        .addComponent(btnUpdate)))
                 .addContainerGap(7, Short.MAX_VALUE))
         );
 
@@ -556,20 +557,12 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdd;
-    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> comboPriority;
     private com.toedter.calendar.JDateChooser dueDateChooser;
-    private javax.swing.JLabel labelDueDate;
-    private javax.swing.JLabel labelDueTime;
-    private javax.swing.JLabel labelPriority;
-    private javax.swing.JLabel labelTaskName;
-    private javax.swing.JLabel labelTimeCln;
     private javax.swing.JSpinner spinnerHour;
     private javax.swing.JSpinner spinnerMinute;
     private javax.swing.JTable taskList;
-    private javax.swing.JPanel taskOptionPanel;
     private javax.swing.JTextField tfTaskName;
     // End of variables declaration//GEN-END:variables
 }
