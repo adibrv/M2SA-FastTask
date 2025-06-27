@@ -1,12 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 
 /**
  *
- * @author adrian
+ * @author GAMUTAN, Adrian C. - 2019102304 - A126
  */
+
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+import java.awt.Color;
+import java.awt.Component;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -20,19 +21,52 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Vector;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 public class MainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
 
-    /**
-     * Creates new form MainFrame
-     */
+    
     public MainFrame() {
         initComponents();
+        taskList.getColumnModel().getColumn(0).setCellRenderer(new PriorityCellRenderer());
+        try {
+            java.awt.Image icon = javax.imageio.ImageIO.read(getClass().getResource("/ftlogo.png"));
+            setIconImage(icon); 
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+        
+        tfSearch.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) { filterTable(); }
+            public void removeUpdate(DocumentEvent e) { filterTable(); }
+            public void changedUpdate(DocumentEvent e) { filterTable(); }
+        });
+        
+        DefaultTableModel model = (DefaultTableModel) taskList.getModel();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        taskList.setRowSorter(sorter);
+        
+        int priorityColumnIndex = 0;
+
+        sorter.setComparator(priorityColumnIndex, (String p1, String p2) -> 
+            Integer.compare(getPriorityValue(p1), getPriorityValue(p2))
+        );
+        
+        int statusColumnIndex = 4;
+        taskList.getColumnModel().getColumn(statusColumnIndex).setCellRenderer(new StatusCellRenderer());
+        
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -43,26 +77,32 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.JPanel bodyPanel = new javax.swing.JPanel();
-        javax.swing.JLabel labelTitle = new javax.swing.JLabel();
-        javax.swing.JLabel labelDesc = new javax.swing.JLabel();
-        javax.swing.JPanel taskListPanel = new javax.swing.JPanel();
-        javax.swing.JScrollPane taskListSPanel = new javax.swing.JScrollPane();
+        bodyPanel = new javax.swing.JPanel();
+        labelTitle = new javax.swing.JLabel();
+        labelDesc = new javax.swing.JLabel();
+        taskListPanel = new javax.swing.JPanel();
+        taskListSPanel = new javax.swing.JScrollPane();
         taskList = new javax.swing.JTable();
-        javax.swing.JPanel taskOptionPanel = new javax.swing.JPanel();
-        javax.swing.JLabel labelTaskName = new javax.swing.JLabel();
+        taskOptionPanel = new javax.swing.JPanel();
+        labelTaskName = new javax.swing.JLabel();
         tfTaskName = new javax.swing.JTextField();
-        javax.swing.JLabel labelDueDate = new javax.swing.JLabel();
+        labelDueDate = new javax.swing.JLabel();
         spinnerHour = new javax.swing.JSpinner();
         dueDateChooser = new com.toedter.calendar.JDateChooser();
-        javax.swing.JLabel labelDueTime = new javax.swing.JLabel();
+        labelDueTime = new javax.swing.JLabel();
         spinnerMinute = new javax.swing.JSpinner();
-        javax.swing.JLabel labelTimeCln = new javax.swing.JLabel();
-        javax.swing.JLabel labelPriority = new javax.swing.JLabel();
+        labelTimeCln = new javax.swing.JLabel();
+        labelPriority = new javax.swing.JLabel();
         comboPriority = new javax.swing.JComboBox<>();
-        javax.swing.JButton btnAdd = new javax.swing.JButton();
-        javax.swing.JButton btnDelete = new javax.swing.JButton();
+        btnAdd = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
+        tfSearch = new javax.swing.JTextField();
+        javax.swing.JLabel labelSearch = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        javax.swing.JMenuItem menuExport = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem menuExit = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("FastTask Application");
@@ -137,15 +177,9 @@ public class MainFrame extends javax.swing.JFrame {
 
         labelTaskName.setText("Task name: ");
 
-        tfTaskName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfTaskNameActionPerformed(evt);
-            }
-        });
-
         labelDueDate.setText("Due date:");
 
-        spinnerHour.setModel(new javax.swing.SpinnerNumberModel(23, 0, 24, 1));
+        spinnerHour.setModel(new javax.swing.SpinnerNumberModel(23, 0, 23, 1));
 
         labelDueTime.setText("Due time:");
 
@@ -178,6 +212,8 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        labelSearch.setText("Search:");
+
         javax.swing.GroupLayout taskOptionPanelLayout = new javax.swing.GroupLayout(taskOptionPanel);
         taskOptionPanel.setLayout(taskOptionPanelLayout);
         taskOptionPanelLayout.setHorizontalGroup(
@@ -186,12 +222,18 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(taskOptionPanelLayout.createSequentialGroup()
+                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 21, Short.MAX_VALUE)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 21, Short.MAX_VALUE)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(taskOptionPanelLayout.createSequentialGroup()
                         .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(labelTaskName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(labelDueDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(labelDueTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(labelPriority, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(comboPriority, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(taskOptionPanelLayout.createSequentialGroup()
@@ -200,14 +242,13 @@ public class MainFrame extends javax.swing.JFrame {
                                 .addComponent(labelTimeCln)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(spinnerMinute, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(tfTaskName)
-                            .addComponent(dueDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)))
+                            .addComponent(dueDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE)
+                            .addComponent(tfTaskName)))
                     .addGroup(taskOptionPanelLayout.createSequentialGroup()
-                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(40, 40, 40)
+                        .addComponent(labelSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         taskOptionPanelLayout.setVerticalGroup(
@@ -217,16 +258,15 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelTaskName)
                     .addComponent(tfTaskName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dueDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(labelDueDate))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(spinnerHour, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(spinnerMinute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(labelTimeCln))
+                .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(spinnerHour, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(spinnerMinute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(labelTimeCln)
                     .addComponent(labelDueTime))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -238,7 +278,11 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnDelete)
                         .addComponent(btnUpdate)))
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(taskOptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(labelSearch))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout bodyPanelLayout = new javax.swing.GroupLayout(bodyPanel);
@@ -248,7 +292,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bodyPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(taskListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(94, 94, 94))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(bodyPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -263,7 +307,7 @@ public class MainFrame extends javax.swing.JFrame {
         bodyPanelLayout.setVerticalGroup(
             bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bodyPanelLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addContainerGap(9, Short.MAX_VALUE)
                 .addComponent(labelTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelDesc)
@@ -271,8 +315,31 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(taskOptionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(taskListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
+
+        jMenu1.setText("File");
+
+        menuExport.setText("Export to PDF");
+        menuExport.setToolTipText("");
+        menuExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuExportActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuExport);
+
+        menuExit.setText("Exit");
+        menuExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuExitActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuExit);
+
+        jMenuBar1.add(jMenu1);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -307,68 +374,10 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
     
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        String taskName = tfTaskName.getText();
-        Date dueDate = dueDateChooser.getDate();
-        int dueHour = (Integer) spinnerHour.getValue();
-        int dueMin = (Integer) spinnerMinute.getValue();
-        Object taskPriority = comboPriority.getSelectedItem();
-
-        String dueTime = String.format("%02d:%02d", dueHour, dueMin);
-
-        if (taskName.isEmpty() || dueDate == null) {
-            JOptionPane.showMessageDialog(this, "Please enter all empty fields!",
-                    "Try again",
-                    JOptionPane.ERROR_MESSAGE);
-        } else {
-            LocalDate localDate = dueDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            int year = localDate.getYear();
-            int month = localDate.getMonthValue();
-            int day = localDate.getDayOfMonth();
-
-            String dueDateFormatted = (month + "/" + day + "/" + year);
-
-            // Calculate dueDateTime as LocalDateTime
-            LocalDateTime dueDateTime = LocalDateTime.of(year, month, day, dueHour, dueMin);
-            String timeLeft = getTimeLeftIndicator(dueDateTime);
-
-            DefaultTableModel model = (DefaultTableModel) taskList.getModel();
-            // Add a new row including the time left
-            model.addRow(new Object[]{taskPriority, taskName, dueDateFormatted, dueTime, timeLeft});
-
-            tfTaskName.setText("");
-            spinnerHour.setValue(23);
-            spinnerMinute.setValue(59);
-            
-            JOptionPane.showMessageDialog(this, "Task added!");
-        }
-    }//GEN-LAST:event_btnAddActionPerformed
-
-    private void tfTaskNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfTaskNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfTaskNameActionPerformed
-
-    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        int row = taskList.getSelectedRow();
-        
-        if (row < 0) {
-            JOptionPane.showMessageDialog(this,
-                    "No task selected!",
-                    "Select a task and try again",
-                    JOptionPane.ERROR_MESSAGE);
-        } else {
-            DefaultTableModel model = (DefaultTableModel) taskList.getModel();
-            model.removeRow(row);
-            
-            JOptionPane.showMessageDialog(this, "Task deleted!");
-        }
-    }//GEN-LAST:event_btnDeleteActionPerformed
-
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         DefaultTableModel model = (DefaultTableModel) taskList.getModel();
         Vector<Vector> tableData = model.getDataVector();
 
-        // Save binary as before
         try {
             FileOutputStream file = new FileOutputStream("file.bin");
             ObjectOutputStream output = new ObjectOutputStream(file);
@@ -444,78 +453,6 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowOpened
 
-    private void taskListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_taskListMouseClicked
-        int index = taskList.getSelectedRow();
-        if (index >= 0) {
-            DefaultTableModel model = (DefaultTableModel)taskList.getModel();
-            
-            String priority = (String)model.getValueAt(index, 0);
-            String task = (String)model.getValueAt(index, 1);
-            String dueTimeStr = (String)model.getValueAt(index, 3);
-            comboPriority.setSelectedItem(priority);
-            tfTaskName.setText(task);
-            
-            try {
-            Date date = new SimpleDateFormat("MM/dd/yyyy").parse((String)model.getValueAt(index,2));
-            dueDateChooser.setDate(date);
-        } catch (ParseException ex) {
-            System.getLogger(MainFrame.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-            dueDateChooser.setDate(null);
-        }
-        String[] timeParts = dueTimeStr.split(":");
-        spinnerHour.setValue(Integer.parseInt(timeParts[0]));
-        spinnerMinute.setValue(Integer.parseInt(timeParts[1]));
-        }
-        
-    }//GEN-LAST:event_taskListMouseClicked
-
-    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        int selectedRow = taskList.getSelectedRow();
-        if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this,
-                    "No task selected!",
-                    "Select a task and try again",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        String taskName = tfTaskName.getText();
-        Date dueDate = dueDateChooser.getDate();
-        int dueHour = (Integer) spinnerHour.getValue();
-        int dueMin = (Integer) spinnerMinute.getValue();
-        Object taskPriority = comboPriority.getSelectedItem();
-
-        if (taskName.isEmpty() || dueDate == null) {
-            JOptionPane.showMessageDialog(this, "Please enter all empty fields!",
-                    "Try again",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        LocalDate localDate = dueDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        int year = localDate.getYear();
-        int month = localDate.getMonthValue();
-        int day = localDate.getDayOfMonth();
-
-        String dueDateFormatted = (month + "/" + day + "/" + year);
-        String dueTime = String.format("%02d:%02d", dueHour, dueMin);
-
-        // If you have a Time Left column, update it too:
-        LocalDateTime dueDateTime = LocalDateTime.of(year, month, day, dueHour, dueMin);
-        String timeLeft = getTimeLeftIndicator(dueDateTime);
-
-        DefaultTableModel model = (DefaultTableModel) taskList.getModel();
-        model.setValueAt(taskPriority, selectedRow, 0);
-        model.setValueAt(taskName, selectedRow, 1);
-        model.setValueAt(dueDateFormatted, selectedRow, 2);
-        model.setValueAt(dueTime, selectedRow, 3);
-        if (model.getColumnCount() > 4) {
-            model.setValueAt(timeLeft, selectedRow, 4);
-        }
-
-        JOptionPane.showMessageDialog(this, "Task updated!");
-    }//GEN-LAST:event_btnUpdateActionPerformed
-
     private void formMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseMoved
         DefaultTableModel model = (DefaultTableModel) taskList.getModel();
            for (int i = 0; i < model.getRowCount(); i++) {
@@ -531,9 +468,245 @@ public class MainFrame extends javax.swing.JFrame {
            }
     }//GEN-LAST:event_formMouseMoved
 
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        int selectedRow = taskList.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this,
+                "No task selected!",
+                "Select a task and try again",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String taskName = tfTaskName.getText();
+        Date dueDate = dueDateChooser.getDate();
+        int dueHour = (Integer) spinnerHour.getValue();
+        int dueMin = (Integer) spinnerMinute.getValue();
+        Object taskPriority = comboPriority.getSelectedItem();
+
+        if (taskName.isEmpty() || dueDate == null) {
+            JOptionPane.showMessageDialog(this, "Please enter all empty fields!",
+                "Try again",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        LocalDate localDate = dueDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int year = localDate.getYear();
+        int month = localDate.getMonthValue();
+        int day = localDate.getDayOfMonth();
+
+        String dueDateFormatted = (month + "/" + day + "/" + year);
+        String dueTime = String.format("%02d:%02d", dueHour, dueMin);
+        
+        LocalDateTime dueDateTime = LocalDateTime.of(year, month, day, dueHour, dueMin);
+        String timeLeft = getTimeLeftIndicator(dueDateTime);
+
+        DefaultTableModel model = (DefaultTableModel) taskList.getModel();
+        model.setValueAt(taskPriority, selectedRow, 0);
+        model.setValueAt(taskName, selectedRow, 1);
+        model.setValueAt(dueDateFormatted, selectedRow, 2);
+        model.setValueAt(dueTime, selectedRow, 3);
+        if (model.getColumnCount() > 4) {
+            model.setValueAt(timeLeft, selectedRow, 4);
+        }
+
+        JOptionPane.showMessageDialog(this, "Task updated!");
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        int row = taskList.getSelectedRow();
+
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this,
+                "No task selected!",
+                "Select a task and try again",
+                JOptionPane.ERROR_MESSAGE);
+        } else {
+            DefaultTableModel model = (DefaultTableModel) taskList.getModel();
+            model.removeRow(row);
+
+            JOptionPane.showMessageDialog(this, "Task deleted!");
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        String taskName = tfTaskName.getText();
+        Date dueDate = dueDateChooser.getDate();
+        int dueHour = (Integer) spinnerHour.getValue();
+        int dueMin = (Integer) spinnerMinute.getValue();
+        Object taskPriority = comboPriority.getSelectedItem();
+
+        String dueTime = String.format("%02d:%02d", dueHour, dueMin);
+
+        if (taskName.isEmpty() || dueDate == null) {
+            JOptionPane.showMessageDialog(this, "Please enter all empty fields!",
+                "Try again",
+                JOptionPane.ERROR_MESSAGE);
+        } else {
+            LocalDate localDate = dueDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            int year = localDate.getYear();
+            int month = localDate.getMonthValue();
+            int day = localDate.getDayOfMonth();
+
+            String dueDateFormatted = (month + "/" + day + "/" + year);
+
+            // Calculate dueDateTime as LocalDateTime
+            LocalDateTime dueDateTime = LocalDateTime.of(year, month, day, dueHour, dueMin);
+            String timeLeft = getTimeLeftIndicator(dueDateTime);
+
+            DefaultTableModel model = (DefaultTableModel) taskList.getModel();
+            // Add a new row including the time left
+            model.addRow(new Object[]{taskPriority, taskName, dueDateFormatted, dueTime, timeLeft});
+
+            tfTaskName.setText("");
+            spinnerHour.setValue(23);
+            spinnerMinute.setValue(59);
+
+            JOptionPane.showMessageDialog(this, "Task added!");
+        }
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void taskListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_taskListMouseClicked
+        int index = taskList.getSelectedRow();
+        if (index >= 0) {
+            DefaultTableModel model = (DefaultTableModel)taskList.getModel();
+
+            String priority = (String)model.getValueAt(index, 0);
+            String task = (String)model.getValueAt(index, 1);
+            String dueTimeStr = (String)model.getValueAt(index, 3);
+            comboPriority.setSelectedItem(priority);
+            tfTaskName.setText(task);
+
+            try {
+                Date date = new SimpleDateFormat("MM/dd/yyyy").parse((String)model.getValueAt(index,2));
+                dueDateChooser.setDate(date);
+            } catch (ParseException ex) {
+                System.getLogger(MainFrame.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                dueDateChooser.setDate(null);
+            }
+            String[] timeParts = dueTimeStr.split(":");
+            spinnerHour.setValue(Integer.parseInt(timeParts[0]));
+            spinnerMinute.setValue(Integer.parseInt(timeParts[1]));
+        }
+    }//GEN-LAST:event_taskListMouseClicked
+
+    private void menuExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExportActionPerformed
+        javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+        fileChooser.setSelectedFile(new java.io.File("table.pdf"));
+        int option = fileChooser.showSaveDialog(this);
+        if (option == javax.swing.JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+            exportTableToPDF(taskList, filePath); // Replace taskList with your JTable variable
+        }
+    }//GEN-LAST:event_menuExportActionPerformed
+
+    private void menuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_menuExitActionPerformed
+
+    private int getPriorityValue(String p) {
+        if ("high".equalsIgnoreCase(p)) return 1;
+        if ("medium".equalsIgnoreCase(p)) return 2;
+        if ("low".equalsIgnoreCase(p)) return 3;
+        return 4;
+    }
+    
+    private void filterTable() {
+        String keyword = tfSearch.getText().trim();
+        TableRowSorter<DefaultTableModel> sorter = (TableRowSorter<DefaultTableModel>) taskList.getRowSorter();
+        if (keyword.length() == 0) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + Pattern.quote(keyword), 1)); // 1 = Task Name column
+        }
+    }
+    
+    private static class StatusCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                       boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            if (!isSelected && value != null && value.toString().equalsIgnoreCase("OVERDUE")) {
+                c.setBackground(Color.RED);
+                c.setForeground(Color.WHITE);
+            } else if (!isSelected) {
+                c.setBackground(Color.WHITE);
+                c.setForeground(Color.BLACK);
+            } else {
+                c.setBackground(table.getSelectionBackground());
+                c.setForeground(table.getSelectionForeground());
+            }
+            return c;
+        }
+    }
+    
+    private static class PriorityCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                       boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            if (!isSelected) {
+                String priority = value != null ? value.toString().toLowerCase() : "";
+                switch (priority) {
+                    case "high":
+                        c.setBackground(Color.RED);
+                        c.setForeground(Color.WHITE);
+                        break;
+                    case "medium":
+                        c.setBackground(Color.YELLOW);
+                        c.setForeground(Color.BLACK);
+                        break;
+                    case "low":
+                        c.setBackground(Color.GREEN);
+                        c.setForeground(Color.BLACK);
+                        break;
+                    default:
+                        c.setBackground(Color.WHITE);
+                        c.setForeground(Color.BLACK);
+                }
+            } else {
+                c.setBackground(table.getSelectionBackground());
+                c.setForeground(table.getSelectionForeground());
+            }
+            return c;
+        }
+    }
     /**
      * @param args the command line arguments
      */
+    
+    public void exportTableToPDF(JTable table, String filePath) {
+        try {
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(filePath));
+            document.open();
+            PdfPTable pdfTable = new PdfPTable(table.getColumnCount());
+
+            // Add table headers
+            for (int i = 0; i < table.getColumnCount(); i++) {
+                pdfTable.addCell(new PdfPCell(new Phrase(table.getColumnName(i))));
+            }
+
+            // Add table rows
+            for (int rows = 0; rows < table.getRowCount(); rows++) {
+                for (int cols = 0; cols < table.getColumnCount(); cols++) {
+                    Object value = table.getValueAt(rows, cols);
+                    pdfTable.addCell(value != null ? value.toString() : "");
+                }
+            }
+
+            document.add(pdfTable);
+            document.close();
+            javax.swing.JOptionPane.showMessageDialog(this, "PDF exported successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this, "Error exporting PDF: " + e.getMessage());
+        }
+    }
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -557,12 +730,28 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel bodyPanel;
+    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> comboPriority;
     private com.toedter.calendar.JDateChooser dueDateChooser;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JLabel labelDesc;
+    private javax.swing.JLabel labelDueDate;
+    private javax.swing.JLabel labelDueTime;
+    private javax.swing.JLabel labelPriority;
+    private javax.swing.JLabel labelTaskName;
+    private javax.swing.JLabel labelTimeCln;
+    private javax.swing.JLabel labelTitle;
     private javax.swing.JSpinner spinnerHour;
     private javax.swing.JSpinner spinnerMinute;
     private javax.swing.JTable taskList;
+    private javax.swing.JPanel taskListPanel;
+    private javax.swing.JScrollPane taskListSPanel;
+    private javax.swing.JPanel taskOptionPanel;
+    private javax.swing.JTextField tfSearch;
     private javax.swing.JTextField tfTaskName;
     // End of variables declaration//GEN-END:variables
 }

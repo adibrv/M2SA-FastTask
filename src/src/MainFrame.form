@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <NonVisualComponents>
+    <Menu class="javax.swing.JMenuBar" name="jMenuBar1">
+      <SubComponents>
+        <Menu class="javax.swing.JMenu" name="jMenu1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="File"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="menuExport">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Export to PDF"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuExportActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+              </AuxValues>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuExit">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Exit"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuExitActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+              </AuxValues>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+      </SubComponents>
+    </Menu>
+  </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
     <Property name="title" type="java.lang.String" value="FastTask Application"/>
@@ -9,6 +47,7 @@
     </Property>
   </Properties>
   <SyntheticProperties>
+    <SyntheticProperty name="menuBar" type="java.lang.String" value="jMenuBar1"/>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
     <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
@@ -59,7 +98,7 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="taskListPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="94" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
@@ -79,7 +118,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                  <EmptySpace pref="9" max="32767" attributes="0"/>
                   <Component id="labelTitle" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="labelDesc" min="-2" max="-2" attributes="0"/>
@@ -87,7 +126,7 @@
                   <Component id="taskOptionPanel" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="taskListPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                  <EmptySpace pref="9" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -223,13 +262,20 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" attributes="0">
+                              <Component id="btnAdd" min="-2" pref="72" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" pref="21" max="32767" attributes="0"/>
+                              <Component id="btnUpdate" pref="81" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" pref="21" max="32767" attributes="0"/>
+                              <Component id="btnDelete" min="-2" pref="72" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="labelTaskName" max="32767" attributes="0"/>
                                   <Component id="labelDueDate" max="32767" attributes="0"/>
                                   <Component id="labelDueTime" max="32767" attributes="0"/>
                                   <Component id="labelPriority" max="32767" attributes="0"/>
                               </Group>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="comboPriority" alignment="0" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
@@ -239,16 +285,15 @@
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="spinnerMinute" min="-2" pref="48" max="-2" attributes="0"/>
                                   </Group>
+                                  <Component id="dueDateChooser" alignment="0" pref="187" max="32767" attributes="0"/>
                                   <Component id="tfTaskName" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="dueDateChooser" alignment="0" pref="170" max="32767" attributes="0"/>
                               </Group>
                           </Group>
-                          <Group type="102" attributes="0">
-                              <Component id="btnAdd" min="-2" pref="72" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="32767" attributes="0"/>
-                              <Component id="btnUpdate" pref="82" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" max="32767" attributes="0"/>
-                              <Component id="btnDelete" min="-2" pref="72" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
+                              <Component id="labelSearch" min="-2" pref="47" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="tfSearch" min="-2" pref="135" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -263,19 +308,17 @@
                           <Component id="labelTaskName" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="tfTaskName" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="13" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="dueDateChooser" min="-2" pref="22" max="-2" attributes="0"/>
                           <Component id="labelDueDate" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="spinnerHour" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="spinnerMinute" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="labelTimeCln" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="labelDueTime" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="spinnerHour" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spinnerMinute" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelTimeCln" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelDueTime" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -290,7 +333,12 @@
                               <Component id="btnUpdate" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="7" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="tfSearch" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelSearch" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="15" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -306,9 +354,6 @@
               </AuxValues>
             </Component>
             <Component class="javax.swing.JTextField" name="tfTaskName">
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfTaskNameActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="labelDueDate">
               <Properties>
@@ -322,7 +367,7 @@
             <Component class="javax.swing.JSpinner" name="spinnerHour">
               <Properties>
                 <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="23" maximum="24" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
+                  <SpinnerModel initial="23" maximum="23" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
                 </Property>
               </Properties>
             </Component>
@@ -407,6 +452,21 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUpdateActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JTextField" name="tfSearch">
+            </Component>
+            <Component class="javax.swing.JLabel" name="labelSearch">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Search:"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
